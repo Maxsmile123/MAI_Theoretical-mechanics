@@ -142,7 +142,7 @@ def anima(i):
 
     return P, VLine, Rholine, VArrow, WLine, WArrow, RLine, RArrow, ArrowRho,
 # animation function
-anim = FuncAnimation(fig, anima, frames=1000, interval=40, blit=True)
+anim = FuncAnimation(fig, anima, frames=1000, interval=35, blit=True)
 
 plt.show()
 
