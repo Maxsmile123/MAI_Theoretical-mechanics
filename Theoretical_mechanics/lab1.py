@@ -20,21 +20,21 @@ y = sp.cos(3*t)*sp.sin(phi)
 
 # Вычисление скорости по x
 Vx = sp.diff(x, t)
-print(Vx)
+
 # Вычисление скорости по y
 Vy = sp.diff(y, t)
-print(Vy)
+
 
 # Вычисление общей скорости
 Vmod = sp.sqrt(Vx*Vx+Vy*Vy)
 
 # Вычисление ускорения по x
 Wx = sp.diff(Vx, t)
-print(Wx)
+
 
 # Вычисление ускорения по y
 Wy = sp.diff(Vy, t)
-print(Wy)
+
 
 # Вычисление общего ускорения
 Wmod = sp.sqrt(Wx*Wx+Wy*Wy)
@@ -83,9 +83,7 @@ P, = ax1.plot(X[0], Y[0], marker='o')
 # Построение векторов ускорения, скорости, радиуса-кривезны, радиуса-вектора
 WLine, = ax1.plot([X[0], X[0]+WX[0]], [Y[0], Y[0]+WY[0]], 'g', label = 'Вектор ускорения')
 VLine, = ax1.plot([X[0], X[0]+VX[0]], [Y[0], X[0]+VX[0]], 'r', label = 'Вектор скорости')
-Rholine, = ax1.plot([X[0], X[0] + (Y[0]+VY[0]) * Rho[0] / sp.sqrt((Y[0] + VY[0])**2 +
-(X[0] + VX[0])**2)], [Y[0], Y[0] - (X[0]+VX[0]) * Rho[0] /
-sp.sqrt((Y[0] + VY[0])**2 + (X[0] + VX[0])**2)], 'b', label = 'Вектор кривизны')
+Rholine, = ax1.plot([X[0], X[0] + VY[0]*Rho[0]/math.sqrt(VX[0]**2 + VY[0]**2)], [Y[0], Y[0] - VX[0] * Rho[0]/math.sqrt(VX[0]**2 + VY[0]**2)], 'b', label = 'Вектор кривизны')
 
 RLine, = ax1.plot([0, X[0]], [0, Y[0]], 'black', label = 'Радиус-вектор')
 
@@ -109,8 +107,8 @@ RArrow, = ax1.plot(RArrowRx + X[0], RArrowRy + Y[0], 'black')
 
 ArrowRhoX = np.array([-0.2*R, 0, -0.2*R])
 ArrowRhoY = np.array([0.1*R, 0, -0.1*R])
-RArrowRhox, RArrowRhoy = Rot2D(ArrowRhoX, ArrowRhoY, math.atan2(Y[0], X[0]))
-ArrowRho, = ax1.plot(RArrowRhox + X[0], RArrowRhoy + Y[0], 'b')
+RArrowRhox, RArrowRhoy = Rot2D(ArrowRhoX, ArrowRhoY, math.atan2(- VX[0] * Rho[0]/math.sqrt(VX[0]**2 + VY[0]**2), VY[0]*Rho[0]/math.sqrt(VX[0]**2 + VY[0]**2)))
+ArrowRho, = ax1.plot(RArrowRhox + X[0] + VY[0] * Rho[0]/math.sqrt(VX[0]**2 + VY[0]**2), RArrowRhoy + Y[0] -VX[0] * Rho[0]/math.sqrt(VX[0]**2 + VY[0]**2), 'b')
 # Вывод легенды на график
 ax1.legend(
         ncol = 2,    #  количество столбцов
@@ -121,21 +119,21 @@ ax1.set(xlim=[-4, 4], ylim=[-4, 4])
 
 # Функция для анимации
 def anima(i):
-    ux = Rho[i] * (Y[i] + VY[i]) / math.sqrt(np.power(X[i] + VX[i], 2) + np.power(Y[i] + VY[i], 2))
-    uy = -Rho[i] * (X[i] + VX[i]) / math.sqrt(np.power(X[i] + VX[i], 2) + np.power(Y[i] + VY[i], 2))
+    RhoX = X[i] + VY[i] * Rho[i]/math.sqrt(VX[i]**2 + VY[i]**2)
+    RhoY = Y[i] - VX[i] * Rho[i]/math.sqrt(VX[i]**2 + VY[i]**2)
 
     P.set_data(X[i], Y[i])
     VLine.set_data([X[i], X[i]+VX[i]], [Y[i], Y[i]+VY[i]])
-    Rholine.set_data([X[i], X[i] + ux], [Y[i], Y[i] + uy])
+    Rholine.set_data([X[i], RhoX], [Y[i], RhoY])
     WLine.set_data([X[i],X[i]+WX[i]],[Y[i],Y[i]+WY[i]])
     RLine.set_data([0, X[i]], [0, Y[i]])
 
     RArrowX, RArrowY = Rot2D(ArrowX, ArrowY, math.atan2(VY[i], VX[i]))
     RWArrowX, RWArrowY = Rot2D(WArrowX, WArrowY, math.atan2(WY[i], WX[i]))
     RArrowRx, RArrowRy = Rot2D(ArrowRx, ArrowRy, math.atan2(Y[i], X[i]))
-    RArrowRhox, RArrowRhoy = Rot2D(ArrowRhoX, ArrowRhoY, math.atan2(uy, ux))
+    RArrowRhox, RArrowRhoy = Rot2D(ArrowRhoX, ArrowRhoY, math.atan2(-Y[i] + RhoY, -X[i] + RhoX))
 
-    ArrowRho.set_data(RArrowRhox + X[i] + ux, RArrowRhoy + Y[i] + uy)
+    ArrowRho.set_data(RArrowRhox + RhoX, RArrowRhoy + RhoY)
     VArrow.set_data(RArrowX + X[i]+VX[i], RArrowY + Y[i]+VY[i])
     WArrow.set_data(RWArrowX+X[i]+WX[i], RWArrowY+Y[i]+WY[i])
     RArrow.set_data(RArrowRx + X[i], RArrowRy + Y[i])
