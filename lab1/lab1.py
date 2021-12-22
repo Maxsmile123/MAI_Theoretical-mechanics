@@ -40,7 +40,7 @@ Wy = sp.diff(Vy, t)
 Wmod = sp.sqrt(Wx*Wx+Wy*Wy)
 # Вычисление тангенсального ускорения
 Wtau = sp.diff(Vmod, t)
-# Вычесление радиуса кривизны
+# Вычисление радиуса кривизны
 rho = (Vmod*Vmod)/sp.sqrt(Wmod*Wmod-Wtau*Wtau)
 
 
