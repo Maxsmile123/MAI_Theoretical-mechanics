@@ -61,7 +61,7 @@ TTb = (m2 * Vb) / 2  # кинетическая энергия груза
 TT = TTa + TTb  # общая кинетическая энергия
 
 # 2) определяем потенциальную энергию
-Pi = - m2 * g * (l0 - phi * R) * sp.cos(phi)
+Pi = - m2 * g * (l0 - phi * R) * sp.cos(psi)
 
 # 3) определяем непотенциальную энергию
 M = alpha * phi
@@ -73,28 +73,9 @@ L = TT - Pi
 ur1 = sp.diff(sp.diff(L, omega_phi), t) - sp.diff(L, phi) - M
 ur2 = sp.diff(sp.diff(L, omega_psi), t) - sp.diff(L, psi)
 
-massa1 = sp.Function('massa1')(t)
-massa2 = sp.Function('massa2')(t)
-length0 = sp.Function('length0')(t)
-Radius = sp.Function('Radius')(t)
-alpha_sym = sp.Function('alpha')(t)
-g_sym = sp.Function('g')(t)
-Ia_sym = (massa1 * Radius ** 2) / 2
-TTa_sym = (Ia_sym * omega_phi ** 2) / 2
-Vr_sym = omega_phi * Radius
-Ve_sym = omega_psi * (length0 - phi * Radius)
-Vb_sym = Vr_sym ** 2 + Ve_sym ** 2
-TTb_sym = (massa2 * Vb_sym) / 2
-TT_sym = TTa_sym + TTb_sym
-Pi_sym = - massa2 * g_sym * (length0 - phi * Radius) * sp.cos(psi)
-M_sym = alpha_sym * phi
-L_sym = TT_sym - Pi_sym
-ur1_sym = sp.diff(sp.diff(L_sym, omega_phi), t) - sp.diff(L_sym, phi) - M_sym
-ur2_sym = sp.diff(sp.diff(L_sym, omega_psi), t) - sp.diff(L_sym, psi)
 
-print(ur1_sym)
-print(ur2_sym)
-
+print(ur1)
+print(ur2)
 # выделяем вторые производные методом Крамера
 a11 = ur1.coeff(sp.diff(omega_phi, t), 1)
 a12 = ur1.coeff(sp.diff(omega_psi, t), 1)
@@ -152,7 +133,7 @@ Circ_C = ax.plot(*circle(Rc, CX, CY), 'black',  linewidth=2)
 Line_AC = ax.plot([AX, CX], [AY - R, CY + Rc], 'black', linewidth=1)
 
 # динамичные объекты
-Rad_A,= ax.plot([AX, R * sp.sin(1.5 * phi[0])], [AY, - R * sp.cos(1.5 * phi[0])], 'black')
+Rad_A,= ax.plot([AX, R * sp.sin(phi[0])], [AY, - R * sp.cos(phi[0])], 'black')
 Line_CB, = ax.plot([AX + l0 + Rc, AX + l0 + Rc + l0 * sp.sin(1.5 * psi[0]) - l0 * sp.sin(1.5 * phi[0])], [AY - R - Rc, - Rc - l0 * sp.cos(1.5 * psi[0]) - l0 * sp.cos(1.5 * phi[0])], 'black', linewidth=1)
 Circ_B, = ax.plot(AX + l0 + Rc + l0 * sp.sin(1.5 * psi[0]) - l0 * sp.sin(1.5 * phi[0]), - Rc - l0 * sp.cos(1.5 * psi[0]) - l0 * sp.cos(1.5 * phi[0]), marker='o', markersize=10, color='black')
 
